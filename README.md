@@ -1,6 +1,27 @@
 # controllr
 
-Remote control for your devices
+Controllr provides a way to remotely control your devices, be they a desktop
+computer, a tablet, or a phone. Controllr contains three or more components:
+the server, the sending device, and the receiving device.
+
+The server acts as a command broker. It accepts commands from a sender, and
+issues commands to a receiver. To be more exact, it supplies commands to a
+receiver upon request, as it has no push capability.
+
+When a sender issues a command for a receiver to run, the command goes into a
+queue for that receiver. At some point, the receiver will request the queue of
+commands from the server, and then run those commands, sending data back to the
+server which the sender can then read (if it so chooses).
+
+This application does not give full command-line access to a receiver. The
+receiver only executes pre-defined commands, and can refuse to execute any
+command for any reason.
+
+The server is written in PHP. There are multiple options for the
+receiver. Currently in development are receivers in `BASH`, `PHP`, `Python`, and
+Tasker on Android. Senders can be written in any language (currently in
+development: `PHP`, `Python`, and Tasker), or `curl` can be used on the Unix
+command-line.
 
 ## Just some notes for now
 
@@ -46,6 +67,14 @@ Some examples:
     `complete`, and should also send a `return_code`, an `output`, or both. At
     this point, the server will redirect further request for the status of this
     command to `/foobar/output/123`.
+  - If `foobar` has decided not to execute the command at this time, it should
+    set the `status` to `postponed`. This might occur if `foobar` has receivers
+    in multiple languages, and the command is only valid for a different
+    language (it might be a `Python` command, but currently the `PHP` receiver
+    is running).
+  - If `foobar` refuses to execute `123` (e.g., it's an invalid command), it
+    should set the `status` to `refused`. Optionally, `output` may include a
+    reason for the refusal (e.g., "invalid command" or "incomplete input").
 
 ### `PATCH`es.
 
