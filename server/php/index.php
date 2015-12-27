@@ -7,15 +7,15 @@ if ($method == "head") $method = "get";
 header("X-Requested-Method: $method");
 
 $pathparts = explode("/", $path);
-@list($empty, $device, $command, $id) = $pathparts;
+@list($empty, $device, $action, $id) = $pathparts;
 if (empty($device))  $device = "server";
-if (empty($command)) $command = "info";
+if (empty($action)) $action = "info";
 header("X-Requested-Device: $device");
-header("X-Requested-Command: $command");
+header("X-Requested-Action: $action");
 
-if (!file_exists("actions/{$method}-{$command}.php")) {
+if (!file_exists("actions/{$method}-{$action}.php")) {
     header("HTTP/1.1 405 Method Not Allowed");
     die;
 }
 
-require_once("actions/{$method}-{$command}.php");
+require_once("actions/{$method}-{$action}.php");
