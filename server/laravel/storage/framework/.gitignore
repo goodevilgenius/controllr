@@ -1,0 +1,15 @@
+config.php
+routes.php
+schedule-*
+compiled.php
+services.json
+events.scanned.php
+routes.scanned.php
+down
+
+cache/*
+sessions/*
+views/*
+!cache/.gitkeep
+!sessions/.gitkeep
+!views/.gitkeep
