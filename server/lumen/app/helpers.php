@@ -6,6 +6,7 @@
  */
 
 use Illuminate\Contracts\Console\Kernel as ConsoleKernel;
+use Psr\Log\LoggerInterface;
 
 /**
  * Allows one to run artisan commands from within the app.
@@ -20,4 +21,18 @@ function artisan(...$args) {
     if (!count($args)) return $artisan;
 
     return $artisan->call(...$args);
+}
+
+/**
+ * Returns an instance of LoggerInterface. Useful for debugging.
+ *
+ * @param  string $tolog A string to log.
+ * @return LoggerInterface
+ */
+function logger(string $tolog = null): LoggerInterface {
+    $logger = app(LoggerInterface::class);
+
+    if (!empty($tolog)) $logger->info($tolog);
+
+    return $logger;
 }
