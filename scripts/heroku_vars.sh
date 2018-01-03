@@ -2,6 +2,8 @@
 
 ENV=server/lumen/.env.prod
 
+VARS=( )
+
 if [ ! -f "$ENV" ]; then
 	echo "$ENV not found" >&2
 	ENV=server/lumen/.env
@@ -17,6 +19,8 @@ fi
 
 echo "Reading from $ENV"
 
-egrep '^[^#][^=]*=[^[:blank:]]+' "$ENV" | while read line; do
-	heroku config:set "$line"
-done
+while read line; do
+	export VARS=( "${VARS[@]}" "$line" )
+done < <(egrep '^[^#][^=]*=[^[:blank:]]+' "$ENV")
+
+heroku config:set "${VARS[@]}"
