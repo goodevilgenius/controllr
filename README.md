@@ -29,34 +29,34 @@ The path should be /{receiver-id}/{action}/{action-id}, in general.
 
 Some examples:
 
-* `POST /foobar/commands/`   
+* `POST /commands/foobar`   
   This would create a new command for `foobar`. The server would respond with
   `202 Accepted` and the response body would contain the original body, with an
   additional id, and a secret `key`. This should be used as authentication
   somehow in subsequent requests for the same command.
-* `GET /foobar/commands/123`   
+* `GET /commands/foobar/123`   
   After a successful POST, this would check the status of command `123` on
   `foobar`.
   - If the command was still unprocessed by `foobar`, the server would
 	respond with `200 OK` and the response body would contain the original
 	`POST`, with a `status` of `enqueued`. At this point, the client can still
-	send `DELETE /foobar/commands/123` and remove the command. The client can
-	also send a `PUT /foobar/commands/123` with different data. Both `DELETE`
+	send `DELETE /commands/foobar/123` and remove the command. The client can
+	also send a `PUT /commands/foobar/123` with different data. Both `DELETE`
 	and `PUT` would need to be authenticated.
   - If the command is currently being processed by `foobar`, the server would
     respond with `200 OK` and the response body would  contain the original
 	`POST`, with a `status` of `in progress`.. It's too late, at this point, to
     delete or alter the command.
   - If the command has been run by `foobar`, the server will respond with
-	`303 See Other` with a `Location` header such as `/foobar/output/123`.
-* `GET /foobar/queue/next`
+	`303 See Other` with a `Location` header such as `/output/foobar/123`.
+* `GET /commands/foobar/next`
   Returns the next command in the queue. This should be authenticated in some
   way. `foobar` needs a secret key known only to the server. The server should
   also send an additional secret key for this command.
-* `GET /foobar/queue/`
+* `GET /commands/foobar`
   Returns the entire command queue for `foobar`. This should also be
   authenticated as described above.
-* `PATCH /foobar/commands/123`
+* `PATCH /commands/foobar/123`
   This is used by `foobar` to update the status of command `123`. It should
   include, as authentication, `foobar`'s secret key, and the key for `123` as
   well.
@@ -66,7 +66,7 @@ Some examples:
   - If `foobar` has completed executing `123`, it should set the `status` to
     `complete`, and should also send a `return_code`, an `output`, or both. At
     this point, the server will redirect further request for the status of this
-    command to `/foobar/output/123`.
+    command to `/output/foobar/123`.
   - If `foobar` has decided not to execute the command at this time, it should
     set the `status` to `postponed`. This might occur if `foobar` has receivers
     in multiple languages, and the command is only valid for a different
