@@ -28,6 +28,6 @@ class CreateReceiverTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('receiver');
+        Schema::dropIfExists('receivers');
     }
 }

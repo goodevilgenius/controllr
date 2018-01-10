@@ -7,11 +7,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 /**
  * A Client
  */
-abstract class Client extends Model
+class Client extends Model
 {
     use SoftDeletes;
 
-    protected $fillable = ['slug'];
+    protected $fillable = ['slug', 'kind'];
 
     /**
      * Sets slug.
