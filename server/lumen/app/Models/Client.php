@@ -12,6 +12,7 @@ class Client extends Model
     use SoftDeletes;
 
     protected $fillable = ['slug', 'kind'];
+    protected $hidden = ['secret'];
 
     /**
      * Sets slug.
