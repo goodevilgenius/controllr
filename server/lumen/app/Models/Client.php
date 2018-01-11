@@ -1,5 +1,10 @@
 <?php namespace App\Models;
 
+use Illuminate\Auth\Authenticatable;
+use Laravel\Lumen\Auth\Authorizable; // @todo replace. These are no good for me
+use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
+use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -7,12 +12,28 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 /**
  * A Client
  */
-class Client extends Model
+class Client extends Model implements AuthenticatableContract, AuthorizableContract
 {
-    use SoftDeletes;
+    use SoftDeletes, Authenticatable, Authorizable;
 
     protected $fillable = ['slug', 'kind'];
     protected $hidden = ['secret'];
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getAuthIdentifierName()
+    {
+        return 'slug';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getAuthPassword()
+    {
+        return $this->secret;
+    }
 
     /**
      * Scope to get specify kind.
