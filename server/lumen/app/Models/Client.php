@@ -15,6 +15,39 @@ class Client extends Model
     protected $hidden = ['secret'];
 
     /**
+     * Scope to get specify kind.
+     *
+     * @param  Builder $query
+     * @return Builder
+     */
+    public function scopeKind(Builder $query, string $kind): Builder
+    {
+        return $query->where('kind', $kind);
+    }
+
+    /**
+     * Scope to get senders.
+     *
+     * @param  Builder $query
+     * @return Builder
+     */
+    public function scopeSenders(Builder $query): Builder
+    {
+        return $this->scopeKind($query, 'sender');
+    }
+
+    /**
+     * Scope to get receivers.
+     *
+     * @param  Builder $query
+     * @return Builder
+     */
+    public function scopeReceivers(Builder $query): Builder
+    {
+        return $this->scopeKind($query, 'receiver');
+    }
+
+    /**
      * Sets slug.
      *
      * @param string $value
