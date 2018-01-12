@@ -16,9 +16,9 @@ The path should be /{action}/{receiver-id}/{action-id}, in general.
 
 Authentication should go like this:
 
-Each client (sender/receiver) will have a randomly generated client id and client secret. When a request is made, an Authorization header should be added. The key given will be a base64-encoded version of the following, appended together: the client id, the client secret, and the request body.
+Each client (sender/receiver) will have a randomly generated client id and client secret. When a request is made, an Authorization header should be added. The key given will be a base64-encoded version of the following, appended together: the client id, the client secret, and the request body, separated by a pipe (`|`).
 
-So, if the client id is 2, and the client secret is bob, and the request is `{"status":"in progress"}`, then the key passed would be `2bob{"status":"in progress"}`, which would then be base64-encoded, so the final header would be `Authorization: Bearer MmJvYnsic3RhdHVzIjoiaW4gcHJvZ3Jlc3MifQ==`. If there is no request body (for a `GET` or `DELETE`, e.g.), then only the id and secret are used.
+So, if the client id is 2, and the client secret is bob, and the request is `{"status":"in progress"}`, then the key passed would be `2|bob|{"status":"in progress"}`, which would then be base64-encoded, so the final header would be `Authorization: Bearer Mnxib2J8eyJzdGF0dXMiOiJpbiBwcm9ncmVzcyJ9`. If there is no request body (for a `GET` or `DELETE`, e.g.), then only the id and secret are used.
 
 Some request examples:
 
