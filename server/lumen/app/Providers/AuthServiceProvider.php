@@ -40,6 +40,7 @@ class AuthServiceProvider extends ServiceProvider
                     $body = $request->getContent();
 
                     if ($body && count($parts) < 3) return null;
+                    if (!$body && count($parts) > 2) return null;
                     if ($body && $parts[2] != $body) return null;
 
                     return Client::where([
