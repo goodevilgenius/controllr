@@ -14,6 +14,8 @@ class Authenticate
      */
     public function handle($request, Closure $next)
     {
+        if (!$request->user()) abort(401);
+
         return $next($request);
     }
 }

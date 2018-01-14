@@ -2,6 +2,7 @@
 
 require_once __DIR__.'/../vendor/autoload.php';
 
+use App\Http\Middleware\Authenticate;
 use App\Providers\AuthServiceProvider;
 use Laravel\Tinker\TinkerServiceProvider;
 
@@ -60,13 +61,8 @@ $app->singleton(
 |
 */
 
-// $app->middleware([
-//    App\Http\Middleware\ExampleMiddleware::class
-// ]);
-
-// $app->routeMiddleware([
-//     'auth' => App\Http\Middleware\Authenticate::class,
-// ]);
+// All routes are authenticated.
+$app->middleware([Authenticate::class]);
 
 /*
 |--------------------------------------------------------------------------
