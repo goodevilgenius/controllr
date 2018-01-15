@@ -83,7 +83,7 @@ class Client extends Model implements AuthenticatableContract, AuthorizableContr
      */
     public function commands(): HasMany
     {
-        return $this->hasMany(Command::class);
+        return $this->hasMany(Command::class, $this->kind . '_id', 'id');
     }
 
     /**
