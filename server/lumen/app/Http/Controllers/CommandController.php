@@ -34,6 +34,40 @@ class CommandController extends Controller
     }
 
     /**
+     * Checks a command if the client is the sender.
+     *
+     * @param string $name
+     * @param int    $id
+     * @return Command
+     */
+    protected function checkCommandSender(string $name, int $id): Command
+    {
+        if ($this->client->type != 'sender') abort(403);
+        $command = Command::findOrFail($id);
+        $this->checkClient($command->sender->name);
+        if ($command->receiver->name != $name) abort(404);
+
+        return $command;
+    }
+
+    /**
+     * Checks a command if the client is the receiver.
+     *
+     * @param string $name
+     * @param int    $id
+     * @return Command
+     */
+    protected function checkCommandReceiver(string $name, int $id): Command
+    {
+        if ($this->client->type != 'receiver') abort(403);
+        $command = Command::findOrFail($id);
+        $this->checkClient($name);
+        if ($command->receiver->name != $name) abort(404);
+
+        return $command;
+    }
+
+    /**
      * Used by $name to get its own list of Commands
      *
      * @param  string $name
@@ -87,25 +121,53 @@ class CommandController extends Controller
      */
     public function show(string $name, int $id): Command
     {
-        if ($this->client->type != 'sender') abort(403);
-        $command = Command::findOrFail($id);
-        $this->checkClient($command->sender->name);
+        $command = $this->checkCommandSender($name, $id);
 
         return $command;
     }
 
+    /**
+     * Sender updates a command.
+     *
+     * @param  string $name
+     * @param  int $id
+     * @return Command
+     */
     public function replace(string $name, int $id): Command
     {
-        return "replacing command $id for $name";
+        $command = $this->checkCommandSender($name, $id);
+        $command->update($this->request->request->all());
+
+        return $command;
     }
 
+    /**
+     * Sender deletes a command.
+     *
+     * @param  string $name
+     * @param  int $id
+     * @return Response
+     */
     public function destroy(string $name, int $id): Response
     {
-        return "deleting command $id for $name";
+        $command = $this->checkCommandSender($name, $id);
+        $command->delete();
+
+        return response(null, Response::HTTP_NO_CONTENT);
     }
 
+    /**
+     * Receiver updates a command.
+     *
+     * @param  string $name
+     * @param  int $id
+     * @return Command
+     */
     public function update(string $name, int $id): Command
     {
-        return "$name is updating command $id";
+        $command = $this->checkCommandReceiver($name, $id);
+        $command->update($this->request->request->all());
+
+        return $command;
     }
 }
