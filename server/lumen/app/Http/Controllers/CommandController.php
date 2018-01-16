@@ -30,7 +30,6 @@ class CommandController extends Controller
      */
     protected function checkClient(string $slug): void
     {
-        logger("checking that {$this->client->slug} is $slug");
         if ($this->client->slug != $slug) abort(403);
     }
 
@@ -43,7 +42,7 @@ class CommandController extends Controller
      */
     protected function checkCommandSender(string $slug, int $id): Command
     {
-        if ($this->client->type != 'sender') abort(403);
+        if ($this->client->kind != 'sender') abort(403);
         $command = Command::findOrFail($id);
         $this->checkClient($command->sender->slug);
         if ($command->receiver->slug != $slug) abort(404);
@@ -60,7 +59,7 @@ class CommandController extends Controller
      */
     protected function checkCommandReceiver(string $slug, int $id): Command
     {
-        if ($this->client->type != 'receiver') abort(403);
+        if ($this->client->kind != 'receiver') abort(403);
         $command = Command::findOrFail($id);
         $this->checkClient($slug);
         if ($command->receiver->slug != $slug) abort(404);
@@ -102,10 +101,10 @@ class CommandController extends Controller
      */
     public function store(string $slug): Command
     {
-        if ($this->client->type != 'sender') abort(403);
+        if ($this->client->kind != 'sender') abort(403);
         // @todo Add ability for receivers to specify allowed senders
 
-        $receiver = Client::where(['type' => 'receiver', 'slug' => $slug])->firstOrFail();
+        $receiver = Client::where(['kind' => 'receiver', 'slug' => $slug])->firstOrFail();
         $command = $receiver->commands()->make($this->request->request->all());
         $command->sender_id = $this->client->id;
         $command->save();
