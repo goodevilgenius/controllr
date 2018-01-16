@@ -15,7 +15,7 @@ $router->get('/', function () {
     return env('APP_NAME');
 });
 
-$router->group(['prefix' => '/commands/{name}'], function () use ($router) {
+$router->group(['prefix' => '/commands/{slug}'], function () use ($router) {
     $router->get('', 'CommandController@index');
     $router->post('', 'CommandController@store');
     $router->get('next', 'CommandController@next');

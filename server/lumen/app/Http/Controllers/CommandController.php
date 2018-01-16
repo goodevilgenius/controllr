@@ -21,31 +21,32 @@ class CommandController extends Controller
     }
 
     /**
-     * Checks that the request's client name matches the given name.
+     * Checks that the request's client slug matches the given slug.
      *
-     * For routes accessible by the receiver, check the name in the route matches.
-     * For routes accessible by the sender, check the name of the command's sender.
+     * For routes accessible by the receiver, check the slug in the route matches.
+     * For routes accessible by the sender, check the slug of the command's sender.
      *
-     * @param string $name
+     * @param string $slug
      */
-    protected function checkClient(string $name): void
+    protected function checkClient(string $slug): void
     {
-        if ($this->client->name != $name) abort(403);
+        logger("checking that {$this->client->slug} is $slug");
+        if ($this->client->slug != $slug) abort(403);
     }
 
     /**
      * Checks a command if the client is the sender.
      *
-     * @param string $name
+     * @param string $slug
      * @param int    $id
      * @return Command
      */
-    protected function checkCommandSender(string $name, int $id): Command
+    protected function checkCommandSender(string $slug, int $id): Command
     {
         if ($this->client->type != 'sender') abort(403);
         $command = Command::findOrFail($id);
-        $this->checkClient($command->sender->name);
-        if ($command->receiver->name != $name) abort(404);
+        $this->checkClient($command->sender->slug);
+        if ($command->receiver->slug != $slug) abort(404);
 
         return $command;
     }
@@ -53,58 +54,58 @@ class CommandController extends Controller
     /**
      * Checks a command if the client is the receiver.
      *
-     * @param string $name
+     * @param string $slug
      * @param int    $id
      * @return Command
      */
-    protected function checkCommandReceiver(string $name, int $id): Command
+    protected function checkCommandReceiver(string $slug, int $id): Command
     {
         if ($this->client->type != 'receiver') abort(403);
         $command = Command::findOrFail($id);
-        $this->checkClient($name);
-        if ($command->receiver->name != $name) abort(404);
+        $this->checkClient($slug);
+        if ($command->receiver->slug != $slug) abort(404);
 
         return $command;
     }
 
     /**
-     * Used by $name to get its own list of Commands
+     * Used by $slug to get its own list of Commands
      *
-     * @param  string $name
+     * @param  string $slug
      * @return Collection
      */
-    public function index(string $name): Collection
+    public function index(string $slug): Collection
     {
-        $this->checkClient($name);
+        $this->checkClient($slug);
         return $this->client->commands;
     }
 
     /**
-     * Used by $name to get the next command in its queue.
+     * Used by $slug to get the next command in its queue.
      *
-     * @param  string $name
+     * @param  string $slug
      * @return Command
      */
-    public function next(string $name): Command
+    public function next(string $slug): Command
     {
-        $this->checkClient($name);
+        $this->checkClient($slug);
         $command = $this->client->commands()->where(['status' => 'enqueued'])->first();
         if (empty($command)) $command = $this->client->commands()->where('status', '!=', 'complete')->first();
         return $command;
     }
 
     /**
-     * Adds a new command for $name
+     * Adds a new command for $slug
      *
-     * @param  string $name
+     * @param  string $slug
      * @return Command
      */
-    public function store(string $name): Command
+    public function store(string $slug): Command
     {
         if ($this->client->type != 'sender') abort(403);
         // @todo Add ability for receivers to specify allowed senders
 
-        $receiver = Client::where(['type' => 'receiver', 'name' => $name])->firstOrFail();
+        $receiver = Client::where(['type' => 'receiver', 'slug' => $slug])->firstOrFail();
         $command = $receiver->commands()->make($this->request->request->all());
         $command->sender_id = $this->client->id;
         $command->save();
@@ -115,13 +116,13 @@ class CommandController extends Controller
     /**
      * Returns a command. This is used by the sender to check the status.
      *
-     * @param  string $name
+     * @param  string $slug
      * @param  int $id
      * @return Command
      */
-    public function show(string $name, int $id): Command
+    public function show(string $slug, int $id): Command
     {
-        $command = $this->checkCommandSender($name, $id);
+        $command = $this->checkCommandSender($slug, $id);
 
         return $command;
     }
@@ -129,13 +130,13 @@ class CommandController extends Controller
     /**
      * Sender updates a command.
      *
-     * @param  string $name
+     * @param  string $slug
      * @param  int $id
      * @return Command
      */
-    public function replace(string $name, int $id): Command
+    public function replace(string $slug, int $id): Command
     {
-        $command = $this->checkCommandSender($name, $id);
+        $command = $this->checkCommandSender($slug, $id);
         $command->update($this->request->request->all());
 
         return $command;
@@ -144,13 +145,13 @@ class CommandController extends Controller
     /**
      * Sender deletes a command.
      *
-     * @param  string $name
+     * @param  string $slug
      * @param  int $id
      * @return Response
      */
-    public function destroy(string $name, int $id): Response
+    public function destroy(string $slug, int $id): Response
     {
-        $command = $this->checkCommandSender($name, $id);
+        $command = $this->checkCommandSender($slug, $id);
         $command->delete();
 
         return response(null, Response::HTTP_NO_CONTENT);
@@ -159,13 +160,13 @@ class CommandController extends Controller
     /**
      * Receiver updates a command.
      *
-     * @param  string $name
+     * @param  string $slug
      * @param  int $id
      * @return Command
      */
-    public function update(string $name, int $id): Command
+    public function update(string $slug, int $id): Command
     {
-        $command = $this->checkCommandReceiver($name, $id);
+        $command = $this->checkCommandReceiver($slug, $id);
         $command->update($this->request->request->all());
 
         return $command;
