@@ -28,7 +28,7 @@ class Command extends Model
      */
     public function receiver(): HasOne
     {
-        return $this->hasOne(Receiver::class);
+        return $this->hasOne(Client::class, 'id', 'receiver_id');
     }
 
     /**
@@ -38,6 +38,6 @@ class Command extends Model
      */
     public function sender(): HasOne
     {
-        return $this->hasOne(Sender::class);
+        return $this->hasOne(Client::class, 'id', 'sender_id');
     }
 }
