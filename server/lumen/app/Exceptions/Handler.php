@@ -45,6 +45,38 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $e)
     {
-        return parent::render($request, $e);
+        $response = parent::render($request, $e);
+
+        if ($request->expectsJson()) {
+            if ($e instanceof ModelNotFoundException) {
+                $e = new NotFoundHttpException($e->getMessage(), $e);
+            } elseif ($e instanceof AuthorizationException) {
+                $e = new HttpException(403, $e->getMessage());
+            }
+
+            $message = ['message' => $e->getMessage()];
+
+            if (env('APP_ENV') == 'local') {
+                $message += [
+                    'code'      => $e->getCode(),
+                    'exception' => class_basename($e) . ' in ' . basename($e->getFile()) . ' line ' . $e->getLine() . ': ' . $e->getMessage(),
+                ];
+
+                // Sometimes the trace is recursive, and can't be json-serialized
+                $trace = $e->getTrace();
+                json_encode($trace);
+                if (!json_last_error()) {
+                    $message['trace'] = $trace;
+                }
+            }
+
+            $status = method_exists($e, 'getStatusCode') && is_callable([$e, 'getStatusCode']) ?
+                    $e->getStatusCode() : Response::HTTP_INTERNAL_SERVER_ERROR;
+
+            $response = response()->json($message, $status, $response->headers->all());
+            $response->exception = $e;
+        }
+
+        return $response;
     }
 }
