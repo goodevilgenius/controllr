@@ -136,6 +136,7 @@ class CommandController extends Controller
     public function replace(string $slug, int $id): Command
     {
         $command = $this->checkCommandSender($slug, $id);
+        if ($command->status != 'enqueued') abort(409);
         $command->update($this->request->request->all());
 
         return $command;
