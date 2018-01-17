@@ -50,6 +50,9 @@ $app->singleton(
     App\Console\Kernel::class
 );
 
+// Change log locations
+logger()->pushHandler(new \Monolog\Handler\StreamHandler('php://stderr'));
+
 /*
 |--------------------------------------------------------------------------
 | Register Middleware
