@@ -11,8 +11,7 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        Commands\MakeReceiver::class,
-        Commands\MakeSender::class,
+        Commands\MakeClient::class,
     ];
 
     /**
