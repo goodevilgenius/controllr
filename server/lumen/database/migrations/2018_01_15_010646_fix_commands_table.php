@@ -16,8 +16,8 @@ class FixCommandsTable extends Migration
         Schema::table('commands', function (Blueprint $table) {
             $table->string('output')->nullable()->change();
 
-            $table->foreign('sender_id')->references('id')->on('client')->onDelete('cascade');
-            $table->foreign('receiver_id')->references('id')->on('client')->onDelete('cascade');
+            $table->foreign('sender_id')->references('id')->on('clients')->onDelete('cascade');
+            $table->foreign('receiver_id')->references('id')->on('clients')->onDelete('cascade');
         });
     }
 
