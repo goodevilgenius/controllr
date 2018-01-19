@@ -22,6 +22,18 @@ class Client extends Model implements AuthenticatableContract, AuthorizableContr
     /**
      * {@inheritdoc}
      */
+    public function save(array $options = []): bool
+    {
+        if (empty($this->secret)) {
+            $this->secret = str_random(32);
+        }
+
+        return parent::save($options);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getAuthIdentifierName()
     {
         return 'slug';
