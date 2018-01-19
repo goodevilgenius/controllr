@@ -26,6 +26,8 @@ class CreateClientsTable extends Migration
         });
 
         foreach(['senders', 'receivers'] as $table) {
+            app('db')->table('commands')->dropForeign('commands_' . str_singular($table) . '_id_foreign');
+
             app('db')->table($table)->get()->each(function ($client) use ($table) {
                 unset($client->id);
                 app('db')->table('clients')->insert((array) $client + ['kind' => str_singular($table)]);

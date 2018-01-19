@@ -31,8 +31,8 @@ class FixCommandsTable extends Migration
         Schema::table('commands', function (Blueprint $table) {
             $table->string('output')->change();
 
-            $table->dropForeign('sender_id');
-            $table->dropForeign('receiver_id');
+            $table->dropForeign('commands_sender_id_foreign');
+            $table->dropForeign('commands_receiver_id_foreign');
         });
     }
 }
