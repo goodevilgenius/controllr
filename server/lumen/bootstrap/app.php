@@ -6,11 +6,9 @@ use App\Http\Middleware\Authenticate;
 use App\Providers\AuthServiceProvider;
 use Laravel\Tinker\TinkerServiceProvider;
 
-try {
-    (new Dotenv\Dotenv(__DIR__.'/../'))->load();
-} catch (Dotenv\Exception\InvalidPathException $e) {
-    //
-}
+(new Laravel\Lumen\Bootstrap\LoadEnvironmentVariables(
+    dirname(__DIR__)
+))->bootstrap();
 
 /*
 |--------------------------------------------------------------------------
