@@ -1,5 +1,11 @@
 # controllr
 
+**This project is no longer under development.**
+
+**After working on this for a while, I decided that I was just reinventing the wheel. This is basically no different than a million different message-broker applications.**
+
+**I'm just leaving this here for posterity, I suppose.**
+
 Controllr provides a way to remotely control your devices, be they a desktop computer, a tablet, or a phone. Controllr contains three or more components: the server, the sending device, and the receiving device.
 
 The server acts as a command broker. It accepts commands from a sender, and issues commands to a receiver. To be more exact, it supplies commands to a receiver upon request, as it has no push capability.
